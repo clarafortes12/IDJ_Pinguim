@@ -2,9 +2,8 @@
 
 State::State(){
     this->quitRequested = false;
-    char* file = "../recursos/img/ocean.jpg";
-    this->bg = Sprite(file);
-    
+    this->bg = Sprite("../recursos/img/ocean.jpg");
+    this->music = Music("../recursos/audio/stageState.ogg"); 
 }
 
 bool State::QuitRequested(){

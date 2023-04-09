@@ -36,9 +36,9 @@ Game::~Game(){
 }
 
 void Game::Run(){
-    while (!GetState().QuitRequested()){
-        GetState().Update(0/*Mudar*/);
-        GetState().Render();
+    while (state->QuitRequested()){
+        state->Update(0/*Mudar*/);
+        state->Render();
 
         SDL_RenderPresent(this->renderer);
 
