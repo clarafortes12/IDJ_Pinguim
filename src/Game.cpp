@@ -85,8 +85,6 @@ void Game::Run(){
 
         SDL_Delay(TIME_DELAY);
     }
-
-    Game::~Game();
 }
 
 SDL_Renderer* Game::GetRenderer(){

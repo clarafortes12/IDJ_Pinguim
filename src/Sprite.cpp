@@ -21,9 +21,9 @@ Sprite::~Sprite(){
 }
 
 void Sprite::Open(string file){
-    /*if(this->texture != nullptr){
-        delete texture;
-    }*/
+    if(this->texture != nullptr){
+        SDL_DestroyTexture(this->texture);
+    }
 
     this->texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
     
