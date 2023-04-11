@@ -1,15 +1,16 @@
 #include "Sprite.h"
 #include "Game.h"
 
-static Game& game = Game::GetInstance();
+//static Game& game = Game::GetInstance();
 
 Sprite::Sprite(){
     this->texture = nullptr;
 }
 
-Sprite::Sprite(char* file){
+Sprite::Sprite(string file){
     this->texture = nullptr;
     Open(file);
+    SetClip(0, 0, this->width, this->height);
 }
 
 Sprite::~Sprite(){
@@ -19,20 +20,19 @@ Sprite::~Sprite(){
 
 }
 
-void Sprite::Open(char* file){
-    if(this->texture != nullptr){
-        Sprite::~Sprite();
-    } 
+void Sprite::Open(string file){
+    /*if(this->texture != nullptr){
+        delete texture;
+    }*/
 
-    texture = IMG_LoadTexture(game.GetRenderer(), file);
+    this->texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
     
     if(texture == nullptr){
-        SDL_GetError();
+        cout << SDL_GetError() << endl;
+        cout << "erro no Load da Imagem" << endl;
     }
     
     int queryTexture = SDL_QueryTexture(this->texture, nullptr, nullptr, &this->width, &this->height);
-
-    SetClip(0, 0, this->width, this->height);
 }
 
 void Sprite::SetClip(int x, int y, int w, int h){
@@ -48,7 +48,7 @@ void Sprite::Render(int x, int y){
     rect.y = y;
     rect.w = this->width;
     rect.h = this->height;
-    int renderCopy = SDL_RenderCopy(game.GetRenderer(), this->texture, &rect, &rect);
+    int renderCopy = SDL_RenderCopy(Game::GetInstance().GetRenderer(), this->texture, &clipRect, &rect);
 }
 
 int Sprite::GetWidth(){

@@ -7,6 +7,7 @@ Music::Music(){
 Music::Music(string file){
     this->music = nullptr;
     Open(file);
+    Play();
 }
 
 Music::~Music(){
@@ -28,7 +29,8 @@ void Music::Stop(int msToStop){
 void Music::Open(string file){
     this->music = Mix_LoadMUS(file.c_str());
     if(this->music == nullptr){
-        SDL_GetError();
+        cout << "Erro em abrir a musica" << endl;
+        cout << SDL_GetError() << endl;
     }
 }
 

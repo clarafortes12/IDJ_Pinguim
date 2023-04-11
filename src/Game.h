@@ -3,6 +3,11 @@
 
 #include <SDL2/SDL.h>
 
+#include <string.h>
+#include <iostream.h>
+
+using namespace std;
+
 #include "State.h"
 
 #define SCREEN_WIDTH 1024 
@@ -20,7 +25,7 @@ class Game{
         SDL_Window* window;
         SDL_Renderer* renderer;
         State* state;
-        Game(const char* title, int width, int height);
+        Game(string title, int width, int height);
     public:
         ~Game();
         void Run();

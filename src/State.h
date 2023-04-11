@@ -4,7 +4,12 @@
 #include "Sprite.h"
 #include "Music.h"
 
-class State{
+#include <string.h>
+#include <iostream.h>
+
+using namespace std;
+
+class State {
 
     private:
         Sprite bg;
