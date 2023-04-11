@@ -2,8 +2,6 @@
 
 State::State(): bg(Sprite("recursos/img/ocean.jpg")), music(Music("recursos/audio/stageState.ogg")){
     this->quitRequested = false;
-    //this->bg = Sprite("recursos/img/alien.png");
-    //this->music = Music("recursos/audio/stageState.ogg");
 }
 
 bool State::QuitRequested(){
@@ -22,5 +20,5 @@ void State::Update(float dt){
 }
 
 void State::Render(){
-    this->bg.Render(0,0/*Mudar*/);
+    this->bg.Render(0, 0);
 }

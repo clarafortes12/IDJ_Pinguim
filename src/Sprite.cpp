@@ -1,8 +1,6 @@
 #include "Sprite.h"
 #include "Game.h"
 
-//static Game& game = Game::GetInstance();
-
 Sprite::Sprite(){
     this->texture = nullptr;
 }
@@ -33,6 +31,10 @@ void Sprite::Open(string file){
     }
     
     int queryTexture = SDL_QueryTexture(this->texture, nullptr, nullptr, &this->width, &this->height);
+    if(queryTexture < 0){
+        cout << "Erro no Query Texture" << endl;
+        cout << SDL_GetError() << endl;
+    }
 }
 
 void Sprite::SetClip(int x, int y, int w, int h){
@@ -49,6 +51,11 @@ void Sprite::Render(int x, int y){
     rect.w = this->width;
     rect.h = this->height;
     int renderCopy = SDL_RenderCopy(Game::GetInstance().GetRenderer(), this->texture, &clipRect, &rect);
+    
+    if(renderCopy < 0){
+        cout << "Erro no Query Texture" << endl;
+        cout << SDL_GetError() << endl;
+    }
 }
 
 int Sprite::GetWidth(){

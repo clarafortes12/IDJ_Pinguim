@@ -19,18 +19,21 @@ Game::Game(string title, int width, int height){
 
         if(init_IMG == 0){
             cout << "Erro de inicialização do IMG" << endl;
+            cout << SDL_GetError() << endl;
         }
 
         int Init_Mix = Mix_Init(MIX_INIT_OGG);
 
         if(Init_Mix == 0){
             cout << "Erro de inicialização do MIX" << endl;
+            cout << SDL_GetError() << endl;
         }
 
         int mixOpenAudio =  Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, CHUNKSIZE);
         
         if(mixOpenAudio == -1){
             cout << "Erro de Abertura de audio" << endl;
+            cout << SDL_GetError() << endl;
         }
         
         int mixAllocateChannels = Mix_AllocateChannels(NUM_CHANNELS);
@@ -49,7 +52,7 @@ Game::Game(string title, int width, int height){
             cout << SDL_GetError() << endl;
         }
         
-        this->state = new State(); //Não está inicializando de forma correta
+        this->state = new State();
         
         if(state == nullptr){
             cout << "Erro de instanciamento de state" << endl;
@@ -77,10 +80,9 @@ Game::~Game(){
 
 void Game::Run(){
     while (!state->QuitRequested()){
-        state->Update(0.1f/*Mudar*/);
+        state->Update(0.1f);
         state->Render();
 
-        //SDL_RenderClear(this->renderer);
         SDL_RenderPresent(this->renderer);
 
         SDL_Delay(TIME_DELAY);
@@ -97,10 +99,8 @@ State& Game::GetState(){
 
 Game& Game::GetInstance(){
     if(instance != nullptr){
-        //cout << "Instanciado" << endl;
         return *instance;
     }else{
-        //cout << "Instanciando" << endl;
         instance = new Game(TITLE, SCREEN_WIDTH, SCREEN_HEIGHT);
         return *instance;
     }

@@ -19,6 +19,10 @@ Music::~Music(){
 void Music::Play(int times){
     if(this->music != nullptr){
         int playMusic = Mix_PlayMusic(music, times);
+        if(playMusic == -1){
+            cout << "Erro em dar play na musica" << endl;
+            cout << SDL_GetError() << endl;
+        }
     }
 }
 
