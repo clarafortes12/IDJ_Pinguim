@@ -1,5 +1,5 @@
-#include "Sprite.h"
-#include "Game.h"
+#include "../header/Sprite.h"
+#include "../header/Game.h"
 
 Sprite::Sprite(){
     this->texture = nullptr;
