@@ -1,4 +1,4 @@
-#include "../header/Music.h"
+#include "Music.h"
 
 Music::Music(){
     this->music = nullptr;

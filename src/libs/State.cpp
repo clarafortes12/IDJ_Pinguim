@@ -1,6 +1,6 @@
-#include "../header/State.h"
+#include "State.h"
 
-State::State(): bg(Sprite("recursos/img/ocean.jpg")), music(Music("recursos/audio/stageState.ogg")){
+State::State(): bg(Sprite("assets/img/ocean.jpg")), music(Music("assets/audio/stageState.ogg")){
     this->quitRequested = false;
 }
 

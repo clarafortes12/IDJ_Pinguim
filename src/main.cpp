@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "header/Game.h"
+#include "Game.h"
 
 #include <string.h>
 #include <iostream.h>

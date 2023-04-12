@@ -1,15 +1,19 @@
 COMPILER = g++
 
-INC_PATH = Include
+SDL_INC_PATH = Include
 SDL_PATH = sdl
 SRC_PATH = src
-CPP_PATH = cpp
+CPP_PATH = libs
+INC_PATH = include
+OBJ_PATH = obj
 
-FLAGS = -Wall -g -I$(SDL_PATH)/$(INC_PATH) -L$(SDL_PATH)/lib
+FLAGS = -Wall -g
+
+INC_PATHS = -I$(SDL_PATH)/$(SDL_INC_PATH) -I$(INC_PATH)
 
 EXEC = jogo
 
-LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+LIBS = -L$(SDL_PATH)/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
 MAIN = $(wildcard $(SRC_PATH)/*.cpp)
 
@@ -18,10 +22,7 @@ FILES = $(wildcard $(SRC_PATH)/$(CPP_PATH)/*.cpp)
 EXECUTAVEL = $(EXEC).exe
 
 all:
-	$(COMPILER) $(FLAGS) -o $(EXEC) $(MAIN) $(FILES) $(LIBS)
+	$(COMPILER) $(FLAGS) $(INC_PATHS) -o $(OBJ_PATH)/$(EXEC) $(MAIN) $(FILES) $(LIBS)
 
 run:
-	.\$(EXECUTAVEL)
-
-clean:
-	del /q $(EXECUTAVEL)
+	.\$(OBJ_PATH)/$(EXECUTAVEL)

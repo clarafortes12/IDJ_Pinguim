@@ -1,4 +1,4 @@
-#include "../header/Game.h"
+#include "Game.h"
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
