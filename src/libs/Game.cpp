@@ -36,7 +36,7 @@ Game::Game(string title, int width, int height){
             cout << SDL_GetError() << endl;
         }
         
-        int mixAllocateChannels = Mix_AllocateChannels(NUM_CHANNELS);
+        Mix_AllocateChannels(NUM_CHANNELS);
 
         this->window =  SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
 

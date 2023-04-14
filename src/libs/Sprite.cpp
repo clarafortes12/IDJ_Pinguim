@@ -1,12 +1,11 @@
 #include "Sprite.h"
 #include "Game.h"
 
-Sprite::Sprite(){
+Sprite::Sprite(GameObject& associated) : Component(associated){
     this->texture = nullptr;
 }
 
-Sprite::Sprite(string file){
-    this->texture = nullptr;
+Sprite::Sprite(GameObject& associated, string file) : Sprite(associated){
     Open(file);
     SetClip(0, 0, this->width, this->height);
 }
@@ -68,6 +67,17 @@ int Sprite::GetHeight(){
 
 bool Sprite::IsOpen(){
     if(this->texture != nullptr){
+        return true;
+    } else{
+        return false;
+    }
+}
+
+void Sprite::Update(float dt){}
+void Sprite::Render(){}
+
+bool Sprite::Is(string type){
+    if(type == "Sprite"){
         return true;
     } else{
         return false;
