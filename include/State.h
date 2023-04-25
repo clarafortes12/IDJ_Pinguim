@@ -22,7 +22,7 @@ class State {
         //Sprite bg;
         Music music;
         bool quitRequested;
-        vector<unique_ptr<Component>> objectArray;
+        vector<unique_ptr<GameObject>> objectArray;
         void Input();
         void AddObject(int mouseX, int mouseY);
     public:
@@ -33,7 +33,5 @@ class State {
         void Update(float dt);
         void Render();
 };
-
-
 
 #endif

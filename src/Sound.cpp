@@ -16,10 +16,12 @@ Sound::~Sound(){
 
 void Sound::Play(int times){
     int playChannel = Mix_PlayChannel(-1, chunk, times - 1);
+
     if(playChannel == -1){
         cout << "Erro de Play Channel - Sound" << endl;
         cout << SDL_GetError() << endl;
     } else{
+        Mix_Volume(playChannel, MIX_MAX_VOLUME);
         this->channel = playChannel;
     }
 }

@@ -40,11 +40,9 @@ void GameObject::RemoveComponent(Component* cpt){
     int tam = this->components.size();
     for(int i = 0; i < tam; i++){
         if(components[i].get() == cpt){
-            //components.erase(i);
+            components.erase(components.begin()+i);
         }
     }
-    //vector<int>::iterador new_end = remove(components.begin(), components.end(), cpt);
-    //remove(components.begin(), components.end(), cpt);
 }
 
 Component* GameObject::GetComponent(string type){

@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "GameObject.h"
+#include "Sound.h"
 
 class Face : public Component{
     private:

@@ -19,11 +19,11 @@ void State::Input() {
 		
 		// Se o evento for clique...
 		if(event.type == SDL_MOUSEBUTTONDOWN) {
-
 			// Percorrer de trás pra frente pra sempre clicar no objeto mais de cima
 			for(int i = objectArray.size() - 1; i >= 0; --i) {
 				// Obtem o ponteiro e casta pra Face.
 				GameObject* go = (GameObject*) objectArray[i].get();
+				
 				// Nota: Desencapsular o ponteiro é algo que devemos evitar ao máximo.
 				// O propósito do unique_ptr é manter apenas uma cópia daquele ponteiro,
 				// ao usar get(), violamos esse princípio e estamos menos seguros.
@@ -56,12 +56,45 @@ void State::Input() {
 }
 
 void State::AddObject(int mouseX, int mouseY){
-	//GameObject* go;
-	//Sprite* strite;
+	GameObject* go = new GameObject();
+
+	Sprite* sprite = new Sprite(*go, "assets/img/penguinface.png");
+	if(sprite == nullptr){
+		cout << "Erro na criação do Sprite" << endl;
+		cout << SDL_GetError() << endl;
+	}
+
+	go->box = Rect(mouseX, mouseY, sprite->GetWidth(), sprite->GetHeight());
+
+	Sound* sound = new Sound(*go, "assets/audio/boom.wav");
+	if(sound == nullptr){
+		cout << "Erro na criação do Sound" << endl;
+		cout << SDL_GetError() << endl;
+	}
+	
+	Face * face = new Face(*go);
+	if(face == nullptr){
+		cout << "Erro na criação da Face" << endl;
+		cout << SDL_GetError() << endl;
+	}
+
+	go->AddComponent(sprite);
+    go->AddComponent(sound);
+    go->AddComponent(face);
+
+	objectArray.emplace_back(go);
 }
 
-State::State()/*: bg(Sprite("assets/img/ocean.jpg")), music(Music("assets/audio/stageState.ogg"))*/{
-    this->quitRequested = false;
+State::State() : music(Music("assets/audio/stageState.ogg")){
+	GameObject* go = new GameObject();
+	Sprite* bg = new Sprite(*go, "assets/img/ocean.jpg");
+	
+	go->box = Rect(0, 0, bg->GetWidth(), bg->GetHeight());
+	go->AddComponent(bg);
+	
+	objectArray.emplace_back(go);
+	
+	this->quitRequested = false;
 }
 
 State::~State(){
@@ -76,18 +109,14 @@ void State::LoadAssets(){}
 
 void State::Update(float dt){
 	Input();
-
 	int tam = objectArray.size();
 	for(int i = 0; i < tam; i++){
         objectArray[i]->Update(dt);
     }
 
-
 }
 
 void State::Render(){
-    //this->bg.Render(0, 0);
-
 	int tam = objectArray.size();
 	for(int i = 0; i < tam; i++){
         objectArray[i]->Render();

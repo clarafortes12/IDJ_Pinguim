@@ -1,8 +1,9 @@
 #ifndef SOUND_H_INCLUDED
 #define SOUND_H_INCLUDED
 
-
-#include <SDL2/SDL_mixer.h>
+#define INCLUDE_SDL
+#define INCLUDE_SDL_MIXER
+#include "SDL_include.h"
 
 #include <string.h>
 #include <iostream.h>

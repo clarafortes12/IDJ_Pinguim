@@ -7,7 +7,7 @@ CPP_PATH = libs
 INC_PATH = include
 OBJ_PATH = obj
 
-FLAGS = -Wall -g
+FLAGS = -Wall -g -std=c++11
 
 INC_PATHS = -I$(SDL_PATH)/$(SDL_INC_PATH) -I$(INC_PATH)
 
@@ -22,7 +22,7 @@ FILES = $(wildcard $(SRC_PATH)/$(CPP_PATH)/*.cpp)
 EXECUTAVEL = $(EXEC).exe
 
 all:
-	$(COMPILER) $(FLAGS) $(INC_PATHS) -o $(OBJ_PATH)/$(EXEC) $(MAIN) $(FILES) $(LIBS)
+	$(COMPILER) $(FLAGS) $(INC_PATHS) -o $(EXEC) $(MAIN) $(FILES) $(LIBS)
 
 run:
-	.\$(OBJ_PATH)/$(EXECUTAVEL)
+	.\$(EXECUTAVEL)

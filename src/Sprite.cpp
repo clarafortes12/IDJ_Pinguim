@@ -43,20 +43,6 @@ void Sprite::SetClip(int x, int y, int w, int h){
     this->clipRect.h = h;
 }
 
-void Sprite::Render(int x, int y){
-    SDL_Rect rect;
-    rect.x = x;
-    rect.y = y;
-    rect.w = this->width;
-    rect.h = this->height;
-    int renderCopy = SDL_RenderCopy(Game::GetInstance().GetRenderer(), this->texture, &clipRect, &rect);
-    
-    if(renderCopy < 0){
-        cout << "Erro no Query Texture" << endl;
-        cout << SDL_GetError() << endl;
-    }
-}
-
 int Sprite::GetWidth(){
     return this->width;
 }
@@ -74,7 +60,16 @@ bool Sprite::IsOpen(){
 }
 
 void Sprite::Update(float dt){}
-void Sprite::Render(){}
+
+void Sprite::Render(){
+    SDL_Rect rect = { (int) associated.box.x, (int) associated.box.y, clipRect.w, clipRect.h };
+    int renderCopy = SDL_RenderCopy(Game::GetInstance().GetRenderer(), this->texture, &clipRect, &rect);
+    
+    if(renderCopy < 0){
+        cout << "Erro no Query Texture" << endl;
+        cout << SDL_GetError() << endl;
+    }
+}
 
 bool Sprite::Is(string type){
     if(type == "Sprite"){

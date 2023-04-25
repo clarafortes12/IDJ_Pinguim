@@ -7,13 +7,13 @@ Face::Face(GameObject& associated) : Component(associated){
 void Face::Damage(int damage){
     this->hitpoints -= damage;
     if(hitpoints <= 0){
-        //RequestDelete do GO que o contém (associated)
+        associated.RequestDelete();
         
-        //GameObject* go = new GameObject;
-        //go->RequestDelete();
+        Sound* sound = (Sound*)associated.GetComponent("Sound");
         
-        //play no componente Sound de seu associated
-        
+        if(sound != nullptr){
+            sound->Play();
+        }
     }
 }
 
