@@ -34,6 +34,8 @@ void Sprite::Open(string file){
         cout << "Erro no Query Texture" << endl;
         cout << SDL_GetError() << endl;
     }
+    associated.box.w = this->width;
+    associated.box.h = this->height;
 }
 
 void Sprite::SetClip(int x, int y, int w, int h){
