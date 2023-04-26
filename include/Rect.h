@@ -8,9 +8,16 @@ class Rect {
         float x, y, w, h;
         Rect();
         Rect(float x, float y, float w, float h);
-        bool Contains(const Vec2& point) const;
-        //void showReact();
-        //Vec2* sumVec(Vec2* vetor1, Vec2* vetor1);
-        //Vec2* multiVec(Vec2* vetor, float escalar);
+        
+        bool Contains(const Vec2& point);
+        float Distance(Rect& rect);
+
+        Vec2 GetCentered();
+
+        Rect& operator+=(const Vec2& vec);
+        Rect& operator=(const Rect& rect);
+
+        Rect operator+(const Vec2& vec);
+        
 };
 #endif

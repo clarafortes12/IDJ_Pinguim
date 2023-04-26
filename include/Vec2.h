@@ -6,32 +6,25 @@ class Vec2{
         float x, y;
         Vec2();
         Vec2(float x, float y);
+        
+        float Magnitude();
+        float Distance(const Vec2& v);
+        float InclinationX();
+        float InclinationReta(const Vec2& vec);
+
         Vec2 GetRotated(float d);
+        Vec2 GetNormalized();
 
         Vec2& operator+=(const Vec2& vec);
         Vec2& operator-=(const Vec2& vec);
-        Vec2& operator*=(const float& vec);
+        Vec2& operator*=(const Vec2& vec);
+        Vec2& operator*=(const float& f);
         Vec2& operator=(const Vec2& vec);
 
-        friend Vec2 operator+(Vec2 vec0, const Vec2& vec) {
-            vec0 += vec;
-            return vec0;
-        }
-
-        friend Vec2 operator-(Vec2 vec0, const Vec2& vec) {
-            vec0 -= vec;
-            return vec0;
-        }
-        
-        friend Vec2 operator*(Vec2 vec0, const float& vec) {
-            vec0 *= vec;
-            return vec0;
-        }
-
-        friend Vec2 operator*(const float& f, Vec2 vec) {
-            vec *= f;
-            return vec;
-        }
+        Vec2 operator+(const Vec2 & vec);
+        Vec2 operator-(const Vec2 & vec);
+        Vec2 operator*(const Vec2 & vec);
+        Vec2 operator*(const float & f);
 };
 
 #endif

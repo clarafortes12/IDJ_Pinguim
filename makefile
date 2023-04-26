@@ -7,7 +7,7 @@ CPP_PATH = libs
 INC_PATH = include
 OBJ_PATH = obj
 
-FLAGS = -Wall -g -std=c++11
+FLAGS = -std=c++11 -Wall -pedantic -Wextra -Wno-unused-parameter -Werror=init-self
 
 INC_PATHS = -I$(SDL_PATH)/$(SDL_INC_PATH) -I$(INC_PATH)
 
