@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Resources.h"
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -87,6 +88,10 @@ void Game::Run(){
 
         SDL_Delay(TIME_DELAY);
     }
+    
+    Resources::ClearImages();
+    Resources::ClearMusics();
+    Resources::ClearSounds();
 }
 
 SDL_Renderer* Game::GetRenderer(){

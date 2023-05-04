@@ -6,6 +6,8 @@
 #include "GameObject.h"
 #include "Face.h"
 #include "Vec2.h"
+#include "TileSet.h"
+#include "TileMap.h"
 
 #include <string.h>
 #include <iostream.h>
@@ -21,6 +23,7 @@ class State {
     private:
         //Sprite bg;
         Music music;
+        TileSet* tileSet;
         bool quitRequested;
         vector<unique_ptr<GameObject>> objectArray;
         void Input();

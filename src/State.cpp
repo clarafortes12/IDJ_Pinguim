@@ -93,11 +93,21 @@ State::State() : music(Music("assets/audio/stageState.ogg")){
 	go->AddComponent(bg);
 	
 	objectArray.emplace_back(go);
+
+	GameObject* goMap = new GameObject();
+	tileSet = new TileSet(64, 64, "assets/img/tileset.png");
+    TileMap* tileMap = new TileMap(*goMap, "assets/map/tileMap.txt", tileSet);
+    
+	goMap->box = Rect(0, 0, tileSet->GetTileWidth(), tileSet->GetTileHeight());
+	goMap->AddComponent(tileMap);
+	
+	objectArray.emplace_back(goMap);
 	
 	this->quitRequested = false;
 }
 
 State::~State(){
+	delete tileSet;
     objectArray.clear();
 }
 
