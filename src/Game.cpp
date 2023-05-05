@@ -9,6 +9,7 @@ Game* Game::instance = nullptr;
 Game::Game(string title, int width, int height){
     if(instance == nullptr){
         instance = this;
+        
         int init_SDL = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
         
         if(init_SDL != 0){

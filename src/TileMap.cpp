@@ -30,6 +30,7 @@ void TileMap::Load(string file){
         }
 
         getline(openFile, line);
+
         while(!openFile.eof()){
             if(line.size() != 0){
                 stringstream lineObj(line);
@@ -41,9 +42,8 @@ void TileMap::Load(string file){
             }
             getline(openFile, line);
         } 
-        
         openFile.close();
-    }   
+    }
 }
 
 void TileMap::SetTileSet(TileSet* tileSet){
@@ -51,11 +51,11 @@ void TileMap::SetTileSet(TileSet* tileSet){
 }
 
 int& TileMap::At(int x, int y, int z){
-    int indice = x;
-    indice += mapWidth * y;
-    indice += mapWidth * mapHeight * z;
+    int index = x;
+    index += mapWidth * y;
+    index += mapWidth * mapHeight * z;
 
-    return tileMatrix[indice];
+    return tileMatrix[index];
 }
 
 void TileMap::Update(float dt){}
@@ -77,15 +77,12 @@ bool TileMap::Is(string type){
 }
 
 void TileMap::RenderLayer(int layer, int cameraX, int cameraY){
-    int i, j = 0;
-    while (i < mapHeight){
-        while(j < mapWidth){
+    for(int i = 0; i < mapHeight; i++){
+        for(int j = 0; j < mapWidth; j++){
             int tileX = j * tileSet->GetTileWidth();
             int tileY = i * tileSet->GetTileHeight();
             tileSet->RenderTile((unsigned)At(j, i, layer), tileX, tileY);
-            j++;
         }
-        i++;
     }
 }
 

@@ -120,8 +120,13 @@ void State::LoadAssets(){}
 void State::Update(float dt){
 	Input();
 	int tam = objectArray.size();
-	for(int i = 0; i < tam; i++){
+	
+	for(int i = (tam-1); i >= 0; i--){
         objectArray[i]->Update(dt);
+
+		if(objectArray[i]->IsDead()){
+			objectArray.erase(objectArray.begin()+i);
+		}
     }
 
 }
