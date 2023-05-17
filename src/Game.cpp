@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Resources.h"
+#include "InputManager.h"
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -82,7 +83,9 @@ Game::~Game(){
 
 void Game::Run(){
     while (!state->QuitRequested()){
-        state->Update(0.1f);
+        InputManager::GetInstance().Update();
+        CalculateDeltaTime();
+        state->Update(GetDeltaTime());
         state->Render();
 
         SDL_RenderPresent(this->renderer);
@@ -110,4 +113,14 @@ Game& Game::GetInstance(){
         instance = new Game(TITLE, SCREEN_WIDTH, SCREEN_HEIGHT);
         return *instance;
     }
+}
+
+void Game::CalculateDeltaTime(){
+    int time = SDL_GetTicks();
+    this-> dt = (time - frameStart)/1000.0;
+    this-> frameStart = time;
+}
+
+float Game::GetDeltaTime(){
+    return this->dt;
 }

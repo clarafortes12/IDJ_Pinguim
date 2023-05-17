@@ -1,15 +1,13 @@
 #ifndef SOUND_H_INCLUDED
 #define SOUND_H_INCLUDED
 
-#define INCLUDE_SDL
-#define INCLUDE_SDL_MIXER
-#include "SDL_include.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 #include <string.h>
 #include <iostream.h>
 
 using namespace std;
-
 
 #include "Component.h"
 #include "GameObject.h"

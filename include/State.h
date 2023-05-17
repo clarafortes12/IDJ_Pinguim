@@ -26,7 +26,7 @@ class State {
         TileSet* tileSet;
         bool quitRequested;
         vector<unique_ptr<GameObject>> objectArray;
-        void Input();
+        //void Input();
         void AddObject(int mouseX, int mouseY);
     public:
         State();

@@ -1,8 +1,11 @@
 #include "State.h"
 
+#include "InputManager.h"
+#include "Camera.h"
+#include "CameraFollower.h"
 #include <math.h>
 
-void State::Input() {
+/*void State::Input() {
 	SDL_Event event;
 	int mouseX, mouseY;
 
@@ -53,7 +56,7 @@ void State::Input() {
 			}
 		}
 	}
-}
+}*/
 
 void State::AddObject(int mouseX, int mouseY){
 	GameObject* go = new GameObject();
@@ -88,9 +91,12 @@ void State::AddObject(int mouseX, int mouseY){
 State::State() : music(Music("assets/audio/stageState.ogg")){
 	GameObject* go = new GameObject();
 	Sprite* bg = new Sprite(*go, "assets/img/ocean.jpg");
-	
+	CameraFollower* camera = new CameraFollower(*go);
+
 	go->box = Rect(0, 0, bg->GetWidth(), bg->GetHeight());
 	go->AddComponent(bg);
+
+	go->AddComponent(camera);
 	
 	objectArray.emplace_back(go);
 
@@ -118,7 +124,20 @@ bool State::QuitRequested(){
 void State::LoadAssets(){}
 
 void State::Update(float dt){
-	Input();
+	InputManager& instance = InputManager::GetInstance();
+	
+	if(instance.QuitRequested() || instance.KeyPress(ESCAPE_KEY)){
+		this-> quitRequested = true;
+	}
+
+    if (instance.KeyPress(SPACE_KEY)) {
+		Vec2 objPos = Vec2( 200, 0 ).GetRotated( -PI + PI*(rand() % 1001)/500.0 ) + Vec2( instance.GetMouseX() + Camera::pos.x, instance.GetMouseX() + Camera::pos.y);
+		AddObject((int)objPos.x, (int)objPos.y);
+
+    }
+
+	Camera::Update(dt);
+	
 	int tam = objectArray.size();
 	
 	for(int i = (tam-1); i >= 0; i--){
