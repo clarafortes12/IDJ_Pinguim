@@ -1,5 +1,6 @@
 #include "TileMap.h"
 #include "Camera.h"
+#include "Vec2.h"
 
 TileMap::TileMap(GameObject& associated, string file, TileSet* tileSet) : Component(associated){
     this->tileSet = tileSet;
@@ -45,6 +46,10 @@ void TileMap::Load(string file){
         } 
         openFile.close();
     }
+    
+    for (int i = 0; i < mapDepth; i++) {
+        parallax.push_back(Vec2());
+    }
 }
 
 void TileMap::SetTileSet(TileSet* tileSet){
@@ -80,9 +85,9 @@ bool TileMap::Is(string type){
 void TileMap::RenderLayer(int layer, int cameraX, int cameraY){
     for(int i = 0; i < mapHeight; i++){
         for(int j = 0; j < mapWidth; j++){
-            int tileX = j * tileSet->GetTileWidth();
-            int tileY = i * tileSet->GetTileHeight();
-            tileSet->RenderTile((unsigned)At(j, i, layer), tileX + cameraX, tileY + cameraY);
+            int tileX = (j * tileSet->GetTileWidth()) + cameraX - (cameraX * parallax[layer].x);
+            int tileY = (i * tileSet->GetTileHeight()) + cameraY - (cameraY * parallax[layer].y);
+            tileSet->RenderTile((unsigned)At(j, i, layer), tileX, tileY);
         }
     }
 }
@@ -97,4 +102,12 @@ int TileMap::GetHeight(){
 
 int TileMap::GetDepth(){
     return mapDepth;
+}
+
+void TileMap::SetParallax(int layer, Vec2 factor){
+    if(layer >= 0 && layer < mapDepth){
+        parallax[layer] = factor;
+    } else{
+        cout<<"Valor inválido de layer"<<endl;
+    }
 }

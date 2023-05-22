@@ -17,6 +17,7 @@ class TileMap : public Component{
     private:
         vector<int> tileMatrix;
         TileSet* tileSet;
+        vector<Vec2> parallax;
         int mapWidth, mapHeight, mapDepth;
     public:
         TileMap(GameObject& associated, string file, TileSet* tileSet);
@@ -31,6 +32,8 @@ class TileMap : public Component{
         void Update(float dt) override;
         void Render() override;
         bool Is(string type) override;
+
+        void SetParallax(int layer, Vec2 factor);
 };
 
 

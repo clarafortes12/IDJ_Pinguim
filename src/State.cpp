@@ -52,6 +52,8 @@ State::State() : music(Music("assets/audio/stageState.ogg")){
 	GameObject* goMap = new GameObject();
 	tileSet = new TileSet(64, 64, "assets/img/tileset.png");
     tileMap = new TileMap(*goMap, "assets/map/tileMap.txt", tileSet);
+	
+	tileMap->SetParallax(1, Vec2(0.5, 0.5));
     
 	goMap->box = Rect(0, 0, tileSet->GetTileWidth(), tileSet->GetTileHeight());
 	goMap->AddComponent(tileMap);
