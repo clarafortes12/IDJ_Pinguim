@@ -13,6 +13,7 @@ class Rect {
         float Distance(Rect& rect);
 
         Vec2 GetCentered();
+        Rect GetCentered(float x, float y);
 
         Rect& operator+=(const Vec2& vec);
         Rect& operator=(const Rect& rect);

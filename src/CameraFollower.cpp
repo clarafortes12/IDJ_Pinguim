@@ -1,7 +1,7 @@
 #include "CameraFollower.h"
 #include "Camera.h"
 
-CameraFollower::CameraFollower(GameObject& go) : Component(go){}
+CameraFollower::CameraFollower(GameObject& associated) : Component(associated){}
 
 void CameraFollower::Update(float dt){
     associated.box.x = Camera::pos.x;

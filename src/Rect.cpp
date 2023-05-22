@@ -33,6 +33,10 @@ Vec2 Rect::GetCentered(){
     return Vec2(x + w/2, y + h/2);
 }
 
+Rect Rect::GetCentered(float x, float y){
+    return Rect(x - w/2, y - h/2, w, h);
+}
+
 Rect& Rect::operator+=(const Vec2& vec){
     this->x = vec.x;
     this->y = vec.y;

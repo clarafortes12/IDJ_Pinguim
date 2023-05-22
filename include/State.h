@@ -19,14 +19,12 @@ using namespace std;
 #define PI 3.14159265358979323846
 
 class State {
-
     private:
-        //Sprite bg;
         Music music;
         TileSet* tileSet;
+        TileMap* tileMap;
         bool quitRequested;
         vector<unique_ptr<GameObject>> objectArray;
-        //void Input();
         void AddObject(int mouseX, int mouseY);
     public:
         State();

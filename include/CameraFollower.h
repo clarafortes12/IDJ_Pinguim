@@ -11,7 +11,7 @@ using namespace std;
 
 class CameraFollower: public Component{
     public:
-        CameraFollower(GameObject& go);
+        CameraFollower(GameObject& associated);
         void Update(float dt) override;
         void Render() override;
         bool Is(string type) override;
