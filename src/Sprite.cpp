@@ -3,8 +3,11 @@
 #include "Resources.h"
 #include "Camera.h"
 
+#include <cmath>
+
 Sprite::Sprite(GameObject& associated) : Component(associated){
     this->texture = nullptr;
+    this->scale = Vec2(1,1);
 }
 
 Sprite::Sprite(GameObject& associated, string file) : Sprite(associated){
@@ -60,8 +63,8 @@ void Sprite::Render(){
 }
 
 void Sprite::Render(int x, int y) {
-    SDL_Rect rect = { x, y, clipRect.w, clipRect.h };
-    int renderCopy = SDL_RenderCopy(Game::GetInstance().GetRenderer(), this->texture, &clipRect, &rect);
+    SDL_Rect rect = { x, y, (int) round(scale.x * clipRect.w), (int) round(scale.y * clipRect.h) };
+    int renderCopy = SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), this->texture, &clipRect, &rect, associated.angleDeg, nullptr, SDL_FLIP_NONE);
     
     if(renderCopy < 0){
         cout << "Erro no Query Texture" << endl;
@@ -75,4 +78,23 @@ bool Sprite::Is(string type){
     } else{
         return false;
     }
+}
+
+void Sprite::SetScaleX(float scaleX, float scaleY){
+    Vec2 center = associated.box.GetCentered();
+
+    if (scaleX != 0) {
+        scale.x = scaleX;
+        associated.box.w = GetWidth();
+    }
+    if (scaleY != 0) {
+        scale.y = scaleY;
+        associated.box.h = GetHeight();
+    }
+
+    associated.box = associated.box.GetCentered(center.x, center.y);
+}
+
+Vec2 Sprite::GetScale(){
+    return Vec2(scale.x, scale.y);
 }

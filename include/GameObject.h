@@ -16,7 +16,10 @@ class GameObject{
     private:
         vector<unique_ptr<Component>> components;
         bool isDead;
+        bool started;
     public:
+        Rect box;
+        double angleDeg;
         GameObject();
         ~GameObject();
         void Update(float dt);
@@ -26,7 +29,7 @@ class GameObject{
         void AddComponent(Component* cpt);
         void RemoveComponent(Component* cpt);
         Component* GetComponent(string type);
-        Rect box;
+        void Start();
 };
 
 #endif

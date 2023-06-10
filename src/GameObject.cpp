@@ -3,6 +3,8 @@
 
 GameObject::GameObject(){
     this->isDead = false;
+    this->started = false;
+    this->angleDeg = 0;
 }
 
 GameObject::~GameObject(){
@@ -53,4 +55,11 @@ Component* GameObject::GetComponent(string type){
         }
     }
     return nullptr;
+}
+
+void GameObject::Start(){
+    int tam = this->components.size();
+    for(int i = 0; i < tam; i++){
+        components[i]->Start();
+    }
 }

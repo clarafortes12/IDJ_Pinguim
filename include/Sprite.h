@@ -9,6 +9,7 @@
 
 #include "Component.h"
 #include "GameObject.h"
+#include "Vec2.h"
 
 using namespace std;
 
@@ -17,7 +18,8 @@ class Sprite : public Component{
         SDL_Texture* texture;
         int width;
         int height;
-        SDL_Rect clipRect;         
+        SDL_Rect clipRect;
+        Vec2 scale;         
     public:
         Sprite(GameObject& associated);
         Sprite(GameObject& associated, string file);
@@ -28,6 +30,8 @@ class Sprite : public Component{
         int GetHeight();
         bool IsOpen();
         void Render(int x, int y);
+        void SetScaleX(float scaleX, float scaleY);
+        Vec2 GetScale();
 
         void Update(float dt) override;
         void Render() override;

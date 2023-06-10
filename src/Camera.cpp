@@ -4,7 +4,7 @@
 
 GameObject* Camera::focus;
 Vec2 Camera::pos;
-Vec2 Camera::speed = Vec2(400, 400);
+Vec2 Camera::speed = Vec2(300, 0);
 
 void Camera::Follow(GameObject* newFocus){
     focus = newFocus;
@@ -28,8 +28,8 @@ void Camera::Update(float dt){
     } else if (intance.IsKeyDown(RIGHT_ARROW_KEY)) {
         pos.x += newSpeed.x;
     } else if (intance.IsKeyDown(UP_ARROW_KEY)) {
-        pos.y -= newSpeed.y;
+        pos.y -= newSpeed.x;
     } else if (intance.IsKeyDown(DOWN_ARROW_KEY)) {
-        pos.y += newSpeed.y;
+        pos.y += newSpeed.x;
     }
 }

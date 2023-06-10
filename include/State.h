@@ -4,7 +4,6 @@
 #include "Sprite.h"
 #include "Music.h"
 #include "GameObject.h"
-#include "Face.h"
 #include "Vec2.h"
 #include "TileSet.h"
 #include "TileMap.h"
@@ -24,8 +23,9 @@ class State {
         TileSet* tileSet;
         TileMap* tileMap;
         bool quitRequested;
-        vector<unique_ptr<GameObject>> objectArray;
-        void AddObject(int mouseX, int mouseY);
+        vector<shared_ptr<GameObject>> objectArray;
+        bool started;
+        //void AddObject(int mouseX, int mouseY);
     public:
         State();
         ~State();
@@ -33,6 +33,9 @@ class State {
         void LoadAssets();
         void Update(float dt);
         void Render();
+        void Start();
+        weak_ptr<GameObject> AddObject(GameObject* go);
+        weak_ptr<GameObject> GetObject(GameObject* go);
 };
 
 #endif

@@ -82,9 +82,12 @@ Game::~Game(){
 }
 
 void Game::Run(){
+    state->Start();
+    
     while (!state->QuitRequested()){
         InputManager::GetInstance().Update();
         CalculateDeltaTime();
+        
         state->Update(GetDeltaTime());
         state->Render();
 

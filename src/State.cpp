@@ -3,39 +3,9 @@
 #include "InputManager.h"
 #include "Camera.h"
 #include "CameraFollower.h"
+#include "Alien.h"
+
 #include <math.h>
-
-void State::AddObject(int mouseX, int mouseY){
-	GameObject* go = new GameObject();
-
-	Sprite* sprite = new Sprite(*go, "assets/img/penguinface.png");
-	if(sprite == nullptr){
-		cout << "Erro na criação do Sprite" << endl;
-		cout << SDL_GetError() << endl;
-	}
-
-	go->box = Rect(mouseX, mouseY, sprite->GetWidth(), sprite->GetHeight());
-
-	Sound* sound = new Sound(*go, "assets/audio/boom.wav");
-	if(sound == nullptr){
-		cout << "Erro na criação do Sound" << endl;
-		cout << SDL_GetError() << endl;
-	}
-	
-	Face * face = new Face(*go);
-	if(face == nullptr){
-		cout << "Erro na criação da Face" << endl;
-		cout << SDL_GetError() << endl;
-	}
-
-	go->box = go->box.GetCentered(mouseX, mouseY);
-
-	go->AddComponent(sprite);
-    go->AddComponent(sound);
-    go->AddComponent(face);
-
-	objectArray.emplace_back(go);
-}
 
 State::State() : music(Music("assets/audio/stageState.ogg")){
 	GameObject* go = new GameObject();
@@ -59,8 +29,17 @@ State::State() : music(Music("assets/audio/stageState.ogg")){
 	goMap->AddComponent(tileMap);
 	
 	objectArray.emplace_back(goMap);
+
+	GameObject* alienGo = new GameObject();
+    Alien* alien = new Alien(*alienGo, 3);
+    
+	alienGo->AddComponent(alien);
+    alienGo->box = alienGo->box.GetCentered(512, 300);
+    
+	objectArray.emplace_back(alienGo);
 	
 	this->quitRequested = false;
+	this->started = false;
 }
 
 State::~State(){
@@ -81,12 +60,6 @@ void State::Update(float dt){
 		this-> quitRequested = true;
 	}
 
-    if (instance.KeyPress(SPACE_KEY)) {
-		Vec2 objPos = Vec2( 200, 0 ).GetRotated( -PI + PI*(rand() % 1001)/500.0 ) + Vec2( instance.GetMouseX() + Camera::pos.x, instance.GetMouseY() + +Camera::pos.y);
-		AddObject((int)objPos.x, (int)objPos.y);
-
-    }
-
 	Camera::Update(dt);
 	
 	int tam = objectArray.size();
@@ -106,4 +79,35 @@ void State::Render(){
 	for(int i = 0; i < tam; i++){
         objectArray[i]->Render();
     }
+}
+
+void State::Start(){
+	LoadAssets();
+	
+	int tam = objectArray.size();
+	for(int i = 0; i < tam; i++){
+        objectArray[i]->Start();
+    }
+	
+	this->started = true;
+}
+
+weak_ptr<GameObject> State::AddObject(GameObject* go){
+	shared_ptr<GameObject> goSharedPtr(go);
+	objectArray.push_back(goSharedPtr);
+	
+	if(started){
+		goSharedPtr->Start();
+	}
+	return weak_ptr<GameObject>(goSharedPtr);
+}
+
+weak_ptr<GameObject> State::GetObject(GameObject* go){
+	int tam = this->objectArray.size();
+    for(int i = 0; i < tam; i++){
+        if(go == objectArray[i].get()){
+            return weak_ptr<GameObject>(objectArray[i]);
+        }
+    }
+	return weak_ptr<GameObject>();
 }
