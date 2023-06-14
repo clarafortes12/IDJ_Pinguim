@@ -85,8 +85,8 @@ bool TileMap::Is(string type){
 void TileMap::RenderLayer(int layer, int cameraX, int cameraY){
     for(int i = 0; i < mapHeight; i++){
         for(int j = 0; j < mapWidth; j++){
-            int tileX = (j * tileSet->GetTileWidth()) + cameraX - (cameraX * parallax[layer].x);
-            int tileY = (i * tileSet->GetTileHeight()) + cameraY - (cameraY * parallax[layer].y);
+            int tileX = (j * tileSet->GetTileWidth()) - cameraX - (cameraX * parallax[layer].x);
+            int tileY = (i * tileSet->GetTileHeight()) - cameraY - (cameraY * parallax[layer].y);
             tileSet->RenderTile((unsigned)At(j, i, layer), tileX, tileY);
         }
     }
