@@ -28,6 +28,7 @@ void PenguinCannon::Update(float dt){
     shared_ptr<GameObject> penguinBodyPTR = pBody.lock();
     if (!penguinBodyPTR || penguinBodyPTR->IsDead()) {
         associated.RequestDelete();
+        return;
     }
 
     InputManager& inputManager = InputManager::GetInstance();

@@ -67,7 +67,7 @@ void Alien::Update(float dt){
 
         Vec2 alienCenter = associated.box.GetCentered();
         explosionGO->box = explosionGO->box.GetCentered(alienCenter.x, alienCenter.y);
-        
+    
         Game::GetInstance().GetState().AddObject(explosionGO);
         return;
     }
@@ -88,7 +88,7 @@ void Alien::Update(float dt){
 
     if(state == AlienState::MOVING){
 
-        /*if (associated.box.GetCentered().Distance(destination) < speed.Magnitude() * dt) {
+        if (associated.box.GetCentered().Distance(destination) < speed.Magnitude() * dt) {
             associated.box = associated.box.GetCentered(destination.x, destination.y);
             state = AlienState::RESTING;
             restTimer.Restart();
@@ -98,7 +98,7 @@ void Alien::Update(float dt){
         } else {
             associated.box.x += speed.x * dt;
             associated.box.y += speed.y * dt;
-        }*/
+        }
     }
 }
 
@@ -116,8 +116,7 @@ void Alien::NotifyCollision(GameObject& other) {
     Bullet* bullet = (Bullet*)other.GetComponent("Bullet");
     if (nullptr != bullet) {
         if (!bullet->targetsPlayer) {
-            cout<<"Alien atingindo"<<endl;
-            //hp -= bullet->GetDamage();
+            hp -= bullet->GetDamage();
         }
     }
 }

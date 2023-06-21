@@ -1,9 +1,13 @@
 #include "Collider.h"
 
+#ifdef DEBUG
+
 #include "Camera.h"
 #include "Game.h"
 
 #include "SDL2/SDL.h"
+
+#endif
 
 Collider::Collider(GameObject& associated, Vec2 scale, Vec2 offset) : Component(associated){
     this->scale = scale;
@@ -21,6 +25,7 @@ void Collider::Update(float dt){
 }
 
 void Collider::Render(){
+#ifdef DEBUG
     Vec2 center = box.GetCentered();
     SDL_Point points[5];
 
@@ -39,6 +44,7 @@ void Collider::Render(){
 
     SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawLines(Game::GetInstance().GetRenderer(), points, 5);
+#endif
 }
 
 bool Collider::Is(string type){

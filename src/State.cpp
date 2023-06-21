@@ -81,10 +81,6 @@ void State::Update(float dt){
 	
 	for(int i = (tam-1); i >= 0; i--){
         objectArray[i]->Update(dt);
-
-		if(objectArray[i]->IsDead()){
-			objectArray.erase(objectArray.begin()+i);
-		}
     }
 
 	tam = objectArray.size();
@@ -107,6 +103,12 @@ void State::Update(float dt){
 				}
 			}
         }
+    }
+	
+	for(int i = (tam-1); i >= 0; i--){
+		if(objectArray[i]->IsDead()){
+			objectArray.erase(objectArray.begin()+i);
+		}
     }
 
 }

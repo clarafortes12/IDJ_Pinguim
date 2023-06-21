@@ -50,12 +50,10 @@ void Bullet::NotifyCollision(GameObject& other){
     PenguinBody* penguinBody = (PenguinBody*)other.GetComponent("PenguinBody");
 
     if (nullptr != alien && !targetsPlayer) {
-        cout<<"Bullet do pinguin atingiu"<<endl;
-        //associated.RequestDelete();
+        associated.RequestDelete();
     }
 
     if (nullptr != penguinBody && targetsPlayer) {
-        cout<<"Bullet do alien atingiu"<<endl;
-        //associated.RequestDelete();
+        associated.RequestDelete();
     }
 }

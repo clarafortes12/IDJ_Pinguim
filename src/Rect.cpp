@@ -38,8 +38,8 @@ Rect Rect::GetCentered(float x, float y){
 }
 
 Rect& Rect::operator+=(const Vec2& vec){
-    this->x = vec.x;
-    this->y = vec.y;
+    this->x += vec.x;
+    this->y += vec.y;
     return *this;
 }
 

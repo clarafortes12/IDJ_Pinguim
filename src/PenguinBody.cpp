@@ -113,8 +113,7 @@ void PenguinBody::NotifyCollision(GameObject& other){
     Bullet* bullet = (Bullet*)other.GetComponent("Bullet");
     if (nullptr != bullet) {
         if (bullet->targetsPlayer) {
-            cout<<"Penguin atingindo"<<endl;
-            //hp -= bullet->GetDamage();
+            hp -= bullet->GetDamage();
         }
     }
 }

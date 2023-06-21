@@ -9,6 +9,8 @@ OBJ_PATH = obj
 
 FLAGS = -std=c++11 -Wall -pedantic -Wextra -Wno-unused-parameter -Werror=init-self
 
+DFLAGS = -ggdb -O0 -DDEBUG
+
 INC_PATHS = -I$(SDL_PATH)/$(SDL_INC_PATH) -I$(INC_PATH)
 
 EXEC = jogo
@@ -23,6 +25,7 @@ EXECUTAVEL = $(EXEC).exe
 
 all:
 	$(COMPILER) $(FLAGS) $(INC_PATHS) -o $(EXEC) $(MAIN) $(FILES) $(LIBS)
-
+debug:
+	$(COMPILER) $(FLAGS) $(DFLAGS) $(INC_PATHS) -o $(EXEC) $(MAIN) $(FILES) $(LIBS)
 run:
 	.\$(EXECUTAVEL)

@@ -19,7 +19,7 @@ Sprite::Sprite(GameObject& associated, string file, int frameCount, float frameT
     this->secondsToSelfDestruct = secondsToSelfDestruct;
 
     Open(file);
-    SetClip(currentFrame * (width/frameCount), 0, this->width/frameCount, this->height);
+    SetClip(currentFrame * (width/frameCount), 0, width/frameCount, this->height);
 }
 
 Sprite::~Sprite(){}
@@ -36,7 +36,7 @@ void Sprite::Open(string file){
         cout << "Erro no Query Texture" << endl;
         cout << SDL_GetError() << endl;
     }
-    associated.box.w = this->width;
+    associated.box.w = this->width/frameCount;
     associated.box.h = this->height;
 }
 
@@ -48,11 +48,11 @@ void Sprite::SetClip(int x, int y, int w, int h){
 }
 
 int Sprite::GetWidth(){
-    return this->width/frameCount;
+    return round(scale.x * (width / frameCount));
 }
 
 int Sprite::GetHeight(){
-    return this->height;
+    return round(scale.y * height);
 }
 
 bool Sprite::IsOpen(){
@@ -64,16 +64,17 @@ bool Sprite::IsOpen(){
 }
 
 void Sprite::Update(float dt){
+    timeElapsed += dt;
     if(secondsToSelfDestruct > 0){
         selfDestructCount.Update(dt);
         if(selfDestructCount.Get() > secondsToSelfDestruct){
             associated.RequestDelete();
         }
     }
-    timeElapsed += dt;
-
+    
     if(timeElapsed >= frameTime){
         currentFrame += 1;
+        timeElapsed = 0;
     }
 
     if(currentFrame >= frameCount){
@@ -129,7 +130,7 @@ Vec2 Sprite::GetScale(){
 
 void Sprite::SetFrame(int frame){
     currentFrame = frame;
-    SetClip(currentFrame * width / frameCount, 0, width / frameCount, height);
+    SetClip(currentFrame * ( width / frameCount), 0, width / frameCount, height);
 }
 
 void Sprite::SetFrameCount(int frameCount){ 
