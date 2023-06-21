@@ -4,6 +4,8 @@
 #include "Game.h"
 #include "State.h"
 #include "Bullet.h"
+#include "Collider.h"
+
 #include <cmath>
 #include <cstdlib>
 
@@ -15,6 +17,9 @@ Minion::Minion(GameObject& associated, weak_ptr<GameObject> alienCenter, float a
     sprite->SetScaleX(scaleValue,scaleValue);
     
     associated.AddComponent(sprite);
+
+    Collider* collider = new Collider(associated);
+    associated.AddComponent(collider);
 
     this->arc = arcOffsetDeg;
 }
@@ -54,7 +59,7 @@ void Minion::Shoot(Vec2 target){
     Vec2 direction = target - pos;
 
     GameObject* bulletGO = new GameObject();
-    Bullet* bullet = new Bullet(*bulletGO, direction.InclinationX(), 300, 30, 350, "assets/img/minionbullet1.png");
+    Bullet* bullet = new Bullet(*bulletGO, direction.InclinationX(), 300, 10, 350, "assets/img/minionBullet2.png", 3, 0.375, true, true);
 
     bulletGO->box = bulletGO->box.GetCentered(pos.x,pos.y);
     bulletGO->AddComponent(bullet);

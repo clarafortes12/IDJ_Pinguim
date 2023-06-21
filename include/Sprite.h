@@ -10,6 +10,7 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Vec2.h"
+#include "Timer.h"
 
 using namespace std;
 
@@ -19,10 +20,18 @@ class Sprite : public Component{
         int width;
         int height;
         SDL_Rect clipRect;
-        Vec2 scale;         
+        Vec2 scale;
+        Timer selfDestructCount;  
+
+        int frameCount;
+        int currentFrame;
+        float timeElapsed;
+        float frameTime;
+        bool continuos;
+        float secondsToSelfDestruct;     
     public:
         Sprite(GameObject& associated);
-        Sprite(GameObject& associated, string file);
+        Sprite(GameObject& associated, string file, int frameCount=1, float frameTime = 1, bool continuos = true, float secondsToSelfDestruct = 0);
         ~Sprite();
         void Open(string file);
         void SetClip(int x, int y, int w, int h);
@@ -36,8 +45,10 @@ class Sprite : public Component{
         void Update(float dt) override;
         void Render() override;
         bool Is(string type) override;
+
+        void SetFrame(int frame);
+        void SetFrameCount(int frameCount);
+        void SetFrameTime(float frameTime);
 };
-
-
 
 #endif

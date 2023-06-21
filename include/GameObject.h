@@ -30,6 +30,7 @@ class GameObject{
         void RemoveComponent(Component* cpt);
         Component* GetComponent(string type);
         void Start();
+        void NotifyCollision(GameObject& other);
 };
 
 #endif

@@ -4,6 +4,9 @@
 #include "Camera.h"
 #include "CameraFollower.h"
 #include "Alien.h"
+#include "PenguinBody.h"
+#include "Collider.h"
+#include "Collision.h"
 
 #include <math.h>
 
@@ -37,7 +40,19 @@ State::State() : music(Music("assets/audio/stageState.ogg")){
     alienGo->box = alienGo->box.GetCentered(512, 300);
     
 	objectArray.emplace_back(alienGo);
-	
+
+	GameObject* penguinGo = new GameObject();
+    PenguinBody* penguin = new PenguinBody(*penguinGo);
+
+    penguinGo->AddComponent(penguin);
+    penguinGo->box = penguinGo->box.GetCentered(704, 640);
+    
+	objectArray.emplace_back(penguinGo);
+    
+    Camera::Follow(penguinGo);
+
+    music.Open("assets/audio/stageState.ogg");
+
 	this->quitRequested = false;
 	this->started = false;
 }
@@ -70,6 +85,28 @@ void State::Update(float dt){
 		if(objectArray[i]->IsDead()){
 			objectArray.erase(objectArray.begin()+i);
 		}
+    }
+
+	tam = objectArray.size();
+	
+	for (int i = 0; i < tam; i++) {
+        for (int j = i+1; j < tam; j++) {
+            shared_ptr<GameObject> Object1GO = objectArray[i];
+            shared_ptr<GameObject> Object2GO = objectArray[j];
+
+            Collider* collider1 = (Collider*)Object1GO->GetComponent("Collider");
+            Collider* collider2 = (Collider*)Object2GO->GetComponent("Collider");
+            
+            if (nullptr != collider1 && nullptr != collider2) {
+				float radCollider1 = (Object1GO->angleDeg*PI)/180;
+				float radCollider2 = (Object2GO->angleDeg*PI)/180;
+				
+				if (Collision::IsColliding(collider1->box, collider2->box, radCollider1, radCollider2)) {
+					Object1GO->NotifyCollision(*Object2GO);
+					Object2GO->NotifyCollision(*Object1GO);
+				}
+			}
+        }
     }
 
 }

@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Vec2.h"
+#include "Timer.h"
 
 #include <string.h>
 #include <vector.h>
@@ -12,32 +13,32 @@
 
 using namespace std;
 
+#define COOLDOW_ALIEN 1.0
+
 class Alien : public Component{
     private:
-        class Action{
-            public:
-                enum ActionType {
-                    MOVE,
-                    SHOOT,
-                };
-                ActionType type;
-                Vec2 pos;
-                Action(ActionType type, float x, float y);
-                
-        };
         Vec2 speed;
         int hp;
         int nMinions;
-        queue<Action> taskQueue;
         vector<weak_ptr<GameObject>> minionArray;
+
+        enum AlienState { MOVING, RESTING };
+        AlienState state;
+        Timer restTimer;
+        Vec2 destination;
+
     public:
+        static int alienCount;
         Alien(GameObject& associated, int nMinions);
         ~Alien();
-        void Start();
-
+        
+        void Start() override;
         void Update(float dt) override;
         void Render() override;
         bool Is(string type) override;
+        void NotifyCollision(GameObject& other) override;
+
+        void Shoot();
 };
 
 #endif

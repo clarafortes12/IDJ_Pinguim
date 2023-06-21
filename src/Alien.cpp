@@ -6,19 +6,32 @@
 #include "InputManager.h"
 #include "Camera.h"
 #include "Minion.h"
+#include "Collider.h"
+#include "Bullet.h"
+#include "Sound.h"
+#include "PenguinBody.h"
 
 #include <cmath>
+
+int Alien::alienCount = 0;
 
 Alien::Alien(GameObject& associated, int nMinions): Component(associated){
     Sprite* sprite = new Sprite(associated, "assets/img/alien.png");
     associated.AddComponent(sprite);
 
+    Collider* collider = new Collider(associated);
+    associated.AddComponent(collider);
+
     this->speed = Vec2(200,0);
     this->nMinions = nMinions;
     this->hp = 30;
+    this->state = AlienState::RESTING;
+
+    alienCount += 1;
 }
 
 Alien::~Alien(){
+    alienCount--;
     minionArray.clear();
 }
 
@@ -40,66 +53,52 @@ void Alien::Start() {
 }
 
 void Alien::Update(float dt){
-    if (this->hp <= 0) {
+    if (hp <= 0) {
         associated.RequestDelete();
+
+        GameObject* explosionGO = new GameObject();
+        Sprite* explosionSprite = new Sprite(*explosionGO, "assets/img/aliendeath.png", 4, 0.3, false, 1.2);
+        Sound* explosionSound = new Sound(*explosionGO, "assets/audio/boom.wav");
+
+        explosionSound->Play();
+        
+        explosionGO->AddComponent(explosionSound);
+        explosionGO->AddComponent(explosionSprite);
+
+        Vec2 alienCenter = associated.box.GetCentered();
+        explosionGO->box = explosionGO->box.GetCentered(alienCenter.x, alienCenter.y);
+        
+        Game::GetInstance().GetState().AddObject(explosionGO);
         return;
     }
+
+    restTimer.Update(dt);
+    PenguinBody* player = PenguinBody::player;
     
     associated.angleDeg = fmod(associated.angleDeg + 10 * rotationSpeed * dt, 360);
+    Vec2 position = associated.box.GetCentered();
 
-    InputManager& inputManager = InputManager::GetInstance();
+    if (state == AlienState::RESTING && player && restTimer.Get() >= COOLDOW_ALIEN) {
+        destination = player->GetPosition();
 
-    Vec2 mousePos = Vec2(inputManager.GetMouseX() + Camera::pos.x, inputManager.GetMouseY() + Camera::pos.y);
-
-    if (inputManager.MousePress(LEFT_MOUSE_BUTTON)) {
-        taskQueue.emplace(Action::SHOOT, mousePos.x, mousePos.y);
-    }
-    if (inputManager.MousePress(RIGHT_MOUSE_BUTTON)) {
-        taskQueue.emplace(Action::MOVE, mousePos.x, mousePos.y);
+        float direction = (destination - position).InclinationX();
+        speed = Vec2(speed.Magnitude(), 0).GetRotated(direction);
+        state = AlienState::MOVING;
     }
 
-    if(!taskQueue.empty()){
-        Action action = taskQueue.front();
+    if(state == AlienState::MOVING){
 
-        if(action.type == Action::MOVE){
-            Vec2 boxPos = associated.box.GetCentered();
-            Vec2 actPos = Vec2(action.pos.x, action.pos.y);
-            Vec2 direction = actPos - boxPos;
-            Vec2 movement = speed.GetRotated(direction.InclinationX()) * dt;
+        /*if (associated.box.GetCentered().Distance(destination) < speed.Magnitude() * dt) {
+            associated.box = associated.box.GetCentered(destination.x, destination.y);
+            state = AlienState::RESTING;
+            restTimer.Restart();
 
-            if (boxPos.Distance(actPos) < movement.Magnitude()) {
-                associated.box = associated.box.GetCentered(actPos.x, actPos.y);
-                taskQueue.pop();
-            } else {
-                associated.box.x += movement.x;
-                associated.box.y += movement.y;
-            }
-        } else if(action.type == Action::SHOOT){
-            float distanceMin = 1e10; 
-            int minionIndex = -1;
-            int tam = minionArray.size();
-            for (int i = 0; i < tam; i++) {
-                shared_ptr<GameObject> minionSharedPtr = minionArray[i].lock();
-                if (minionSharedPtr) {
-                    float distance = action.pos.Distance(minionSharedPtr->box.GetCentered());
-                    if (distance <= distanceMin) {
-                        distanceMin = distance;
-                        minionIndex = i;
-                    }
-                }
-            }
-
-            if (minionIndex != -1) {
-                shared_ptr<GameObject> minionGo = minionArray[minionIndex].lock();
-                if (minionGo) {
-                    Minion* minion = (Minion*)minionGo->GetComponent("Minion");
-                    if (nullptr != minion) {
-                        minion->Shoot(Vec2(action.pos.x,action.pos.y));
-                    }
-                }
-            }
-            taskQueue.pop();
-        }
+            Shoot();
+            
+        } else {
+            associated.box.x += speed.x * dt;
+            associated.box.y += speed.y * dt;
+        }*/
     }
 }
 
@@ -113,7 +112,46 @@ bool Alien::Is(string type){
     }
 }
 
-Alien::Action::Action(ActionType type, float x, float y){
-    this->type = type;
-    this->pos = Vec2(x, y);
+void Alien::NotifyCollision(GameObject& other) {
+    Bullet* bullet = (Bullet*)other.GetComponent("Bullet");
+    if (nullptr != bullet) {
+        if (!bullet->targetsPlayer) {
+            cout<<"Alien atingindo"<<endl;
+            //hp -= bullet->GetDamage();
+        }
+    }
+}
+
+void Alien::Shoot(){
+    PenguinBody* player = PenguinBody::player;
+    
+    float distanceMin = 1e10; 
+    int minionIndex = -1;
+
+    if (player != nullptr) {
+
+        Vec2 playerPosition = player->GetPosition();
+
+        int tam = minionArray.size();
+        for (int i = 0; i < tam; i++) {
+            shared_ptr<GameObject> minionSharedPtr = minionArray[i].lock();
+            if (minionSharedPtr) {
+                float distance = playerPosition.Distance(minionSharedPtr->box.GetCentered());
+                if (distance <= distanceMin) {
+                    distanceMin = distance;
+                    minionIndex = i;
+                }
+            }
+        }
+
+        if (minionIndex != -1) {
+            shared_ptr<GameObject> minionGo = minionArray[minionIndex].lock();
+            if (minionGo) {
+                Minion* minion = (Minion*)minionGo->GetComponent("Minion");
+                if (nullptr != minion) {
+                    minion->Shoot(Vec2(playerPosition.x,playerPosition.y));
+                }
+            }
+        }
+    }
 }

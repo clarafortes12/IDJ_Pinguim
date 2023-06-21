@@ -24,7 +24,7 @@ class Vec2{
         Vec2 operator+(const Vec2 & vec);
         Vec2 operator-(const Vec2 & vec);
         Vec2 operator*(const Vec2 & vec);
-        Vec2 operator*(const float & f);
+        Vec2 operator*(const float & f) const;
 };
 
 #endif

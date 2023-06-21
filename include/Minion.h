@@ -10,7 +10,6 @@
 
 using namespace std;
 
-#define PI 3.14159265358979323846
 #define rotationSpeed (PI/2)
 
 class Minion: public Component{

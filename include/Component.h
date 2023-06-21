@@ -6,6 +6,8 @@
 
 using namespace std;
 
+#define PI 3.14159265358979323846
+
 class GameObject;
 
 class Component{
@@ -18,6 +20,7 @@ class Component{
         virtual void Render() = 0;
         virtual bool Is(string type) = 0;
         virtual void Start();
+        virtual void NotifyCollision(GameObject& other);
 };
 
 #endif

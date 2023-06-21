@@ -84,6 +84,6 @@ Vec2 Vec2::operator*(const Vec2 & vec){
     return Vec2(x * vec.x, y * vec.y);
 }
 
-Vec2 Vec2::operator*(const float & f){
+Vec2 Vec2::operator*(const float & f) const{
     return Vec2(x * f, y * f);
 }

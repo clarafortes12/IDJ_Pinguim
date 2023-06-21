@@ -10,9 +10,16 @@ Sprite::Sprite(GameObject& associated) : Component(associated){
     this->scale = Vec2(1,1);
 }
 
-Sprite::Sprite(GameObject& associated, string file) : Sprite(associated){
+Sprite::Sprite(GameObject& associated, string file, int frameCount, float frameTime, bool continuos, float secondsToSelfDestruct) : Sprite(associated){
+    this->frameCount = frameCount;
+    this->frameTime = frameTime;
+    this->currentFrame = 0;
+    this->timeElapsed = 0;
+    this->continuos = continuos;
+    this->secondsToSelfDestruct = secondsToSelfDestruct;
+
     Open(file);
-    SetClip(0, 0, this->width, this->height);
+    SetClip(currentFrame * (width/frameCount), 0, this->width/frameCount, this->height);
 }
 
 Sprite::~Sprite(){}
@@ -41,7 +48,7 @@ void Sprite::SetClip(int x, int y, int w, int h){
 }
 
 int Sprite::GetWidth(){
-    return this->width;
+    return this->width/frameCount;
 }
 
 int Sprite::GetHeight(){
@@ -56,7 +63,28 @@ bool Sprite::IsOpen(){
     }
 }
 
-void Sprite::Update(float dt){}
+void Sprite::Update(float dt){
+    if(secondsToSelfDestruct > 0){
+        selfDestructCount.Update(dt);
+        if(selfDestructCount.Get() > secondsToSelfDestruct){
+            associated.RequestDelete();
+        }
+    }
+    timeElapsed += dt;
+
+    if(timeElapsed >= frameTime){
+        currentFrame += 1;
+    }
+
+    if(currentFrame >= frameCount){
+        if(continuos){
+            currentFrame = 0;
+        } else{
+            currentFrame = frameTime - 1;
+        }
+    }
+    SetFrame(currentFrame);
+}
 
 void Sprite::Render(){
     Render(associated.box.x - Camera::pos.x , associated.box.y - Camera::pos.y);
@@ -97,4 +125,19 @@ void Sprite::SetScaleX(float scaleX, float scaleY){
 
 Vec2 Sprite::GetScale(){
     return Vec2(scale.x, scale.y);
+}
+
+void Sprite::SetFrame(int frame){
+    currentFrame = frame;
+    SetClip(currentFrame * width / frameCount, 0, width / frameCount, height);
+}
+
+void Sprite::SetFrameCount(int frameCount){ 
+    this->frameCount = frameCount;
+    associated.box.w = GetWidth();
+    SetFrame(0);
+}
+
+void Sprite::SetFrameTime(float frameTime){
+    this->frameTime = frameTime;    
 }

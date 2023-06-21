@@ -15,11 +15,13 @@ class Bullet : public Component{
         float distanceLeft;
         int damage;
     public:
-        Bullet(GameObject& associated, float angle, float speed, int damage, float maxDistance, string sprite);
+        bool targetsPlayer;
+        Bullet(GameObject& associated, float angle, float speed, int damage, float maxDistance, string sprite, int frameCount, float frameTime, bool continuos, bool targetsPlayer);
         
         void Update(float dt) override;
         void Render() override;
         bool Is(string type) override;
+        void NotifyCollision(GameObject& other) override;
 
         int GetDamage();
 };
