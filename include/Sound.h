@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include <iostream.h>
+#include <memory>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ using namespace std;
 
 class Sound : public Component{
     private:
-        Mix_Chunk* chunk;
+        shared_ptr<Mix_Chunk> chunk;
         int channel;
     public:
         Sound(GameObject& associated);

@@ -27,9 +27,10 @@ class Alien : public Component{
         Timer restTimer;
         Vec2 destination;
 
+        float timeOffset;
     public:
         static int alienCount;
-        Alien(GameObject& associated, int nMinions);
+        Alien(GameObject& associated, int nMinions, float timeOffset);
         ~Alien();
         
         void Start() override;

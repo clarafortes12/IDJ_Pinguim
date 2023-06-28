@@ -26,7 +26,7 @@ PenguinBody::PenguinBody(GameObject& associated):Component(associated){
     this->speed = Vec2(0, 0);
     this->linearSpeed = 0;
     this->angle = 0;
-    this->hp = 30;
+    this->hp = 100;
 
     player = this;
 }
@@ -37,7 +37,7 @@ PenguinBody::~PenguinBody(){
 
 void PenguinBody::Start(){
     Game& game = Game::GetInstance();
-    State& state = game.GetState();
+    State& state = game.GetCurrentState();
 
     GameObject* goPenguinCannon = new GameObject();
     
@@ -70,7 +70,7 @@ void PenguinBody::Update(float dt){
         Vec2 explosionCenter = associated.box.GetCentered();
         explosionGO->box = explosionGO->box.GetCentered(explosionCenter.x, explosionCenter.y);
         
-        Game::GetInstance().GetState().AddObject(explosionGO);
+        Game::GetInstance().GetCurrentState().AddObject(explosionGO);
         
         return;
     }
@@ -95,6 +95,18 @@ void PenguinBody::Update(float dt){
     Vec2 movement = speed.GetRotated(angle) * dt;
     associated.box.x += movement.x;
     associated.box.y += movement.y;
+
+    Rect mapRect = {0, 0, 1408, 1280};
+    if (associated.box.x >= mapRect.w){
+        associated.box.x = mapRect.w;
+    } else if (associated.box.x < 0){
+        associated.box.x = 0;
+    }
+    if (associated.box.y >= mapRect.h) {
+        associated.box.y = mapRect.h;
+    } else if (associated.box.y < 0) {
+        associated.box.y = 0;
+    }
 
     associated.angleDeg = (angle*180)/PI;
 }

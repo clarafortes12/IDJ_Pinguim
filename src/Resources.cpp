@@ -1,11 +1,12 @@
 #include "Resources.h"
 
-unordered_map<string, SDL_Texture*> Resources::imageTable;
-unordered_map<string, Mix_Music*> Resources::musicTable;
-unordered_map<string, Mix_Chunk*> Resources::soundTable;
+unordered_map<string, shared_ptr<SDL_Texture>> Resources::imageTable;
+unordered_map<string, shared_ptr<Mix_Music>> Resources::musicTable;
+unordered_map<string, shared_ptr<Mix_Chunk>> Resources::soundTable;
+unordered_map<string, shared_ptr<TTF_Font>> Resources::fontTable;
 
 
-SDL_Texture* Resources::GetImage(string file){
+shared_ptr<SDL_Texture> Resources::GetImage(string file){
     if (imageTable.find(file) != imageTable.end()) {
         return imageTable.find(file)->second;
     }
@@ -17,19 +18,25 @@ SDL_Texture* Resources::GetImage(string file){
         cout << "erro no Load da Imagem" << endl;
     }
 
-    imageTable.insert(make_pair(file, texture));
+    shared_ptr<SDL_Texture> texturePTR(texture, [=](SDL_Texture* texture) { SDL_DestroyTexture(texture); });
+
+    imageTable.insert(make_pair(file, texturePTR));
     
-    return texture;
+    return texturePTR;
 }
 
 void Resources::ClearImages(){
-    for(pair<string, SDL_Texture*> element : imageTable){
-        SDL_DestroyTexture(element.second);
+    for(auto elemento = imageTable.begin(); elemento != imageTable.end();) {
+        auto ptr = elemento->second;
+        if (ptr.unique()) {
+            elemento = imageTable.erase(elemento);
+        } else {
+            elemento++;
+        }
     }
-    imageTable.clear();
 }
 
-Mix_Music* Resources::GetMusic(string file){
+shared_ptr<Mix_Music> Resources::GetMusic(string file){
     if (musicTable.find(file) != musicTable.end()) {
         return musicTable.find(file)->second;
     }
@@ -40,20 +47,24 @@ Mix_Music* Resources::GetMusic(string file){
         cout << "Erro em abrir a musica" << endl;
         cout << SDL_GetError() << endl;
     }
-    
-    musicTable.insert(make_pair(file, music));
-    
-    return music;
+
+    shared_ptr<Mix_Music> musicPTR(music, [=](Mix_Music* music) { Mix_FreeMusic(music); });
+    musicTable.insert(make_pair(file, musicPTR));
+    return musicPTR;
 }
 
 void Resources::ClearMusics(){
-    for(pair<string, Mix_Music*> element : musicTable){
-        Mix_FreeMusic(element.second);
+    for(auto elemento = musicTable.begin(); elemento != musicTable.end();) {
+        auto ptr = elemento->second;
+        if (ptr.unique()) {
+            elemento = musicTable.erase(elemento);
+        } else {
+            elemento++;
+        }
     }
-    musicTable.clear();
 }
 
-Mix_Chunk* Resources::GetSound(string file){
+shared_ptr<Mix_Chunk> Resources::GetSound(string file){
     if (soundTable.find(file) != soundTable.end()) {
         return soundTable.find(file)->second;
     }
@@ -65,14 +76,52 @@ Mix_Chunk* Resources::GetSound(string file){
         cout << SDL_GetError() << endl;
     }
 
-    soundTable.insert(make_pair(file, chunk));
+    shared_ptr<Mix_Chunk> chunkPTR(chunk, [=](Mix_Chunk* chunk) { Mix_FreeChunk(chunk); });
+    soundTable.insert(make_pair(file, chunkPTR));
     
-    return chunk;
+    return chunkPTR;
 }
 
 void Resources::ClearSounds(){
-    for(pair<string, Mix_Chunk*> element : soundTable){
-        Mix_FreeChunk(element.second);
+    for(auto elemento = musicTable.begin(); elemento != musicTable.end();) {
+        auto ptr = elemento->second;
+        if (ptr.unique()) {
+            elemento = musicTable.erase(elemento);
+        } else {
+            elemento++;
+        }
     }
-    soundTable.clear();
+
+}
+
+
+shared_ptr<TTF_Font> Resources::GetFont(string file, int fontSize){
+    string key = file + to_string(fontSize);
+
+    if (fontTable.find(key) != fontTable.end()) {
+        return fontTable.find(key)->second;
+    }
+
+    TTF_Font* font = TTF_OpenFont(file.c_str(), fontSize);
+    
+    if(font == nullptr){
+        cout << "Erro de OpenFont - Text" << endl;
+        cout << SDL_GetError() << endl;
+    }
+
+    shared_ptr<TTF_Font> fontPTR(font, [=](TTF_Font* font) { TTF_CloseFont(font); });
+    fontTable.insert(make_pair(key, fontPTR));
+    
+    return fontPTR;
+}
+
+void Resources::ClearFont(){
+    for(auto elemento = fontTable.begin(); elemento != fontTable.end();) {
+        auto ptr = elemento->second;
+        if (ptr.unique()) {
+            elemento = fontTable.erase(elemento);
+        } else {
+            elemento++;
+        }
+    }
 }

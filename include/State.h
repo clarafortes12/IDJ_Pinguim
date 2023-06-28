@@ -1,12 +1,7 @@
 #ifndef STATE_H_INCLUDED
 #define STATE_H_INCLUDED
 
-#include "Sprite.h"
-#include "Music.h"
 #include "GameObject.h"
-#include "Vec2.h"
-#include "TileSet.h"
-#include "TileMap.h"
 
 #include <string.h>
 #include <iostream.h>
@@ -16,24 +11,33 @@
 using namespace std;
 
 class State {
-    private:
-        Music music;
-        TileSet* tileSet;
-        TileMap* tileMap;
+    protected:
         bool quitRequested;
-        vector<shared_ptr<GameObject>> objectArray;
+        bool popRequested;
         bool started;
-        //void AddObject(int mouseX, int mouseY);
+        vector<shared_ptr<GameObject>> objectArray;
     public:
         State();
-        ~State();
+        virtual ~State();
+
+        virtual void LoadAssets() = 0;
+        virtual void Update(float dt) = 0;
+        virtual void Render() = 0;
+        
+        virtual void Start() = 0;
+        virtual void Pause() = 0;
+        virtual void Resume() = 0;
+
+        
+        virtual weak_ptr<GameObject> AddObject(GameObject* go);
+        virtual weak_ptr<GameObject> GetObject(GameObject* go);
+
+        bool PopRequested();
         bool QuitRequested();
-        void LoadAssets();
-        void Update(float dt);
-        void Render();
-        void Start();
-        weak_ptr<GameObject> AddObject(GameObject* go);
-        weak_ptr<GameObject> GetObject(GameObject* go);
+
+        void StartArray();
+        virtual void UpdateArray(float dt);
+        virtual void RenderArray();
 };
 
 #endif

@@ -53,7 +53,7 @@ bool Minion::Is(string type){
 
 void Minion::Shoot(Vec2 target){
     Game& game = Game::GetInstance();
-    State& state = game.GetState();
+    State& state = game.GetCurrentState();
 
     Vec2 pos = associated.box.GetCentered();
     Vec2 direction = target - pos;

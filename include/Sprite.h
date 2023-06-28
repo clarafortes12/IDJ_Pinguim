@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include <iostream.h>
+#include <memory>
 
 #include "Component.h"
 #include "GameObject.h"
@@ -16,7 +17,7 @@ using namespace std;
 
 class Sprite : public Component{
     private:
-        SDL_Texture* texture;
+        shared_ptr<SDL_Texture> texture;
         int width;
         int height;
         SDL_Rect clipRect;

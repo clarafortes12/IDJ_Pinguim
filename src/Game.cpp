@@ -9,6 +9,8 @@ Game* Game::instance = nullptr;
 
 Game::Game(string title, int width, int height){
     if(instance == nullptr){
+        this->frameStart = 0;
+        this->dt = 0;
         instance = this;
         
         int init_SDL = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
@@ -23,6 +25,13 @@ Game::Game(string title, int width, int height){
         if(init_IMG == 0){
             cout << "Erro de inicialização do IMG" << endl;
             cout << SDL_GetError() << endl;
+        }
+        
+        int initTTF = TTF_Init();
+    
+        if(initTTF != 0){
+            cout<<"TTF não foi inicializado corretamente"<<endl;
+            return;
         }
 
         int Init_Mix = Mix_Init(MIX_INIT_OGG);
@@ -55,11 +64,8 @@ Game::Game(string title, int width, int height){
             cout << SDL_GetError() << endl;
         }
         
-        this->state = new State();
+        this->storedState = nullptr;
         
-        if(state == nullptr){
-            cout << "Erro de instanciamento de state" << endl;
-        }
 
     } else{
         cout << "Erro no instanciamento do Game - Ja instanciado" << endl;
@@ -67,7 +73,17 @@ Game::Game(string title, int width, int height){
 }
 
 Game::~Game(){
-    delete state;
+    if(storedState != nullptr){
+        delete storedState;
+    }
+    
+    while(!stateStack.empty()){
+        stateStack.pop();
+    }
+
+    Resources::ClearImages();
+    Resources::ClearMusics();
+    Resources::ClearSounds();
 
     SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);
@@ -75,38 +91,11 @@ Game::~Game(){
     Mix_CloseAudio();
     Mix_Quit();
 
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 
     delete instance;
-}
-
-void Game::Run(){
-    state->Start();
-    
-    while (!state->QuitRequested()){
-        InputManager::GetInstance().Update();
-        CalculateDeltaTime();
-        
-        state->Update(GetDeltaTime());
-        state->Render();
-
-        SDL_RenderPresent(this->renderer);
-
-        SDL_Delay(TIME_DELAY);
-    }
-    
-    Resources::ClearImages();
-    Resources::ClearMusics();
-    Resources::ClearSounds();
-}
-
-SDL_Renderer* Game::GetRenderer(){
-    return renderer;
-}
-
-State& Game::GetState(){
-    return *state;
 }
 
 Game& Game::GetInstance(){
@@ -118,6 +107,81 @@ Game& Game::GetInstance(){
     }
 }
 
+SDL_Renderer* Game::GetRenderer(){
+    return renderer;
+}
+
+State& Game::GetCurrentState(){
+    return *(stateStack.top());
+}
+
+void Game::Push(State* state){
+    storedState = state;
+}
+
+void Game::Run(){
+    if (storedState == nullptr) {
+        cout<<"storedState está vazio, não é possível iniciar sem um state inicial"<<endl;
+        return;
+    }
+
+    stateStack.emplace(storedState);
+    storedState = nullptr;
+
+    GetCurrentState().Start();
+
+    while (!(stateStack.empty() || GetCurrentState().QuitRequested())) {
+        auto& topState = stateStack.top();
+        
+        if (topState->PopRequested()) {
+            
+            stateStack.pop();
+            
+            if (!stateStack.empty()) {
+                auto& resumeState = stateStack.top();
+                resumeState->Resume();
+            }
+        }
+
+        if (storedState != nullptr) {
+            
+            if (!stateStack.empty()) {
+                
+                auto& pauseState = stateStack.top();
+                pauseState->Pause();
+            }
+            
+            stateStack.emplace(storedState);
+            storedState->Start();
+            storedState = nullptr;
+        }        
+
+        if (stateStack.empty()) {
+            break;
+        }
+
+        auto& state = stateStack.top();
+
+        InputManager::GetInstance().Update();
+        CalculateDeltaTime();
+        
+        state->Update(GetDeltaTime());
+        state->Render();
+
+        SDL_RenderPresent(this->renderer);
+
+        SDL_Delay(TIME_DELAY);
+    }
+
+    while (!stateStack.empty()) {
+        stateStack.pop();
+    }
+
+    Resources::ClearImages();
+    Resources::ClearMusics();
+    Resources::ClearSounds();
+}
+        
 void Game::CalculateDeltaTime(){
     int time = SDL_GetTicks();
     this-> dt = (time - frameStart)/1000.0;

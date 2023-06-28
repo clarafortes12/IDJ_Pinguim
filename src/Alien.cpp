@@ -2,7 +2,7 @@
 
 #include "Sprite.h"
 #include "Game.h"
-#include "State.h"
+#include "StageState.h"
 #include "InputManager.h"
 #include "Camera.h"
 #include "Minion.h"
@@ -15,7 +15,7 @@
 
 int Alien::alienCount = 0;
 
-Alien::Alien(GameObject& associated, int nMinions): Component(associated){
+Alien::Alien(GameObject& associated, int nMinions, float timeOffset): Component(associated){
     Sprite* sprite = new Sprite(associated, "assets/img/alien.png");
     associated.AddComponent(sprite);
 
@@ -24,8 +24,9 @@ Alien::Alien(GameObject& associated, int nMinions): Component(associated){
 
     this->speed = Vec2(200,0);
     this->nMinions = nMinions;
-    this->hp = 30;
+    this->hp = 200;
     this->state = AlienState::RESTING;
+    this->timeOffset = timeOffset;
 
     alienCount += 1;
 }
@@ -37,7 +38,7 @@ Alien::~Alien(){
 
 void Alien::Start() {
     Game& game = Game::GetInstance();
-    State& state = game.GetState();
+    State& state = game.GetCurrentState();
 
     for (int i = 0; i < nMinions; i++) {
         GameObject* minionGo = new GameObject();
@@ -68,7 +69,7 @@ void Alien::Update(float dt){
         Vec2 alienCenter = associated.box.GetCentered();
         explosionGO->box = explosionGO->box.GetCentered(alienCenter.x, alienCenter.y);
     
-        Game::GetInstance().GetState().AddObject(explosionGO);
+        Game::GetInstance().GetCurrentState().AddObject(explosionGO);
         return;
     }
 
@@ -78,7 +79,7 @@ void Alien::Update(float dt){
     associated.angleDeg = fmod(associated.angleDeg + 10 * rotationSpeed * dt, 360);
     Vec2 position = associated.box.GetCentered();
 
-    if (state == AlienState::RESTING && player && restTimer.Get() >= COOLDOW_ALIEN) {
+    if (state == AlienState::RESTING && player && restTimer.Get() >= (COOLDOW_ALIEN+timeOffset)) {
         destination = player->GetPosition();
 
         float direction = (destination - position).InclinationX();

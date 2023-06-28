@@ -6,7 +6,6 @@
 #include <cmath>
 
 Sprite::Sprite(GameObject& associated) : Component(associated){
-    this->texture = nullptr;
     this->scale = Vec2(1,1);
 }
 
@@ -25,13 +24,13 @@ Sprite::Sprite(GameObject& associated, string file, int frameCount, float frameT
 Sprite::~Sprite(){}
 
 void Sprite::Open(string file){
-    if(this->texture != nullptr){
-        SDL_DestroyTexture(this->texture);
+    if(texture){
+        SDL_DestroyTexture(this->texture.get());
     }
 
     texture = Resources::GetImage(file);
 
-    int queryTexture = SDL_QueryTexture(this->texture, nullptr, nullptr, &this->width, &this->height);
+    int queryTexture = SDL_QueryTexture(this->texture.get(), nullptr, nullptr, &this->width, &this->height);
     if(queryTexture < 0){
         cout << "Erro no Query Texture" << endl;
         cout << SDL_GetError() << endl;
@@ -56,7 +55,7 @@ int Sprite::GetHeight(){
 }
 
 bool Sprite::IsOpen(){
-    if(this->texture != nullptr){
+    if(texture){
         return true;
     } else{
         return false;
@@ -93,7 +92,7 @@ void Sprite::Render(){
 
 void Sprite::Render(int x, int y) {
     SDL_Rect rect = { x, y, (int) round(scale.x * clipRect.w), (int) round(scale.y * clipRect.h) };
-    int renderCopy = SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), this->texture, &clipRect, &rect, associated.angleDeg, nullptr, SDL_FLIP_NONE);
+    int renderCopy = SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), this->texture.get(), &clipRect, &rect, associated.angleDeg, nullptr, SDL_FLIP_NONE);
     
     if(renderCopy < 0){
         cout << "Erro no Query Texture" << endl;

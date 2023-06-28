@@ -5,6 +5,7 @@
 
 #include <string.h>
 #include <iostream.h>
+#include <stack>
 
 using namespace std;
 
@@ -21,20 +22,28 @@ using namespace std;
 class Game{
 
     private:
-        static Game* instance;
-        SDL_Window* window;
-        SDL_Renderer* renderer;
-        State* state;
         int frameStart;
         float dt;
-        Game(string title, int width, int height);
+        
+        static Game* instance;
+
+        State* storedState;
+        SDL_Window* window;
+        SDL_Renderer* renderer;
+        stack<unique_ptr<State>> stateStack;
+
         void CalculateDeltaTime();
     public:
+        Game(string title, int width, int height);
         ~Game();
-        void Run();
-        SDL_Renderer* GetRenderer();
-        State& GetState();
+
         static Game& GetInstance();
+        SDL_Renderer* GetRenderer();
+        State& GetCurrentState();
+        
+        void Push(State* state);
+
+        void Run();
         float GetDeltaTime();
 };
 

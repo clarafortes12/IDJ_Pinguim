@@ -1,9 +1,7 @@
 #include "Sound.h"
 #include "Resources.h"
 
-Sound::Sound(GameObject& associated) : Component(associated){
-    this->chunk = nullptr;
-}
+Sound::Sound(GameObject& associated) : Component(associated){}
 
 Sound::Sound(GameObject& associated, string file) : Sound(associated){
     Open(file);
@@ -12,7 +10,7 @@ Sound::Sound(GameObject& associated, string file) : Sound(associated){
 Sound::~Sound(){}
 
 void Sound::Play(int times){
-    int playChannel = Mix_PlayChannel(-1, chunk, times - 1);
+    int playChannel = Mix_PlayChannel(-1, chunk.get(), times - 1);
 
     if(playChannel == -1){
         cout << "Erro de Play Channel - Sound" << endl;
@@ -24,17 +22,17 @@ void Sound::Play(int times){
 }
 
 void Sound::Stop(){
-    if(this->chunk != nullptr){
+    if(chunk){
         Mix_HaltChannel(this->channel);
     }
 }
 
 void Sound::Open(string file){
-    this-> chunk = Resources::GetSound(file);
+    this->chunk = Resources::GetSound(file);
 }
 
 bool Sound::IsOpen(){
-    if(this->chunk != nullptr){
+    if(chunk){
         return true;
     } else{
         return false;

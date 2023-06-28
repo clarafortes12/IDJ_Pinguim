@@ -1,5 +1,5 @@
 #include "Bullet.h"
-
+#include "StageState.h"
 #include "Sprite.h"
 #include "Collider.h"
 #include "Alien.h"
@@ -12,6 +12,8 @@ Bullet::Bullet(GameObject& associated, float angle, float speed, int damage, flo
     
     Collider* collider = new Collider(associated);
     associated.AddComponent(collider);
+
+    associated.angleDeg = (angle*180)/PI;
     
     this->distanceLeft = maxDistance;
     this->damage = damage;

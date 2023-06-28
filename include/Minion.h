@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Vec2.h"
+#include "StageState.h"
 
 #include <string.h>
 #include <memory.h>

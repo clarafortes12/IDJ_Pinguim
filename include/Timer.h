@@ -3,7 +3,7 @@
 
 class Timer{
     private:
-        float time;
+        float time = 0;
     public:
         Timer();
         void Update(float dt);

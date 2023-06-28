@@ -62,10 +62,10 @@ void PenguinCannon::Shoot(){
         timer.Restart();
 
         Game& game = Game::GetInstance();
-        State& state = game.GetState();
+        State& state = game.GetCurrentState();
 
         GameObject* bulletGO = new GameObject();
-        Bullet* bullet = new Bullet(*bulletGO, angle, 300, 10, 350, "assets/img/penguinbullet.png", 4, 0.375, false, false);
+        Bullet* bullet = new Bullet(*bulletGO, angle, 300, 30, 350, "assets/img/penguinbullet.png", 4, 0.375, false, false);
 
         Vec2 initialPosition = associated.box.GetCentered() + Vec2(50, 0).GetRotated(angle);
         bulletGO->box = bulletGO->box.GetCentered(initialPosition.x, initialPosition.y);

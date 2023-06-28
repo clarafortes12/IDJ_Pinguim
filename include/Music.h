@@ -5,12 +5,14 @@
 
 #include <string.h>
 #include <iostream.h>
+#include <memory>
+
 
 using namespace std;
 
 class Music{
     private:
-        Mix_Music* music;
+        shared_ptr<Mix_Music> music;
     public:
         Music();
         Music(string file);

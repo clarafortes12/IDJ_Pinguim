@@ -6,6 +6,7 @@
 #include "Vec2.h"
 #include "PenguinBody.h"
 #include "Timer.h"
+#include "StageState.h"
 
 #include <string.h>
 #include <vector.h>

@@ -1,12 +1,9 @@
 #include "Music.h"
 #include "Resources.h"
 
-Music::Music(){
-    this->music = nullptr;
-}
+Music::Music(){}
 
 Music::Music(string file){
-    this->music = nullptr;
     Open(file);
     Play();
 }
@@ -14,8 +11,8 @@ Music::Music(string file){
 Music::~Music(){}
 
 void Music::Play(int times){
-    if(this->music != nullptr){
-        int playMusic = Mix_PlayMusic(music, times);
+    if(music){
+        int playMusic = Mix_PlayMusic(music.get(), times);
         if(playMusic == -1){
             cout << "Erro em dar play na musica" << endl;
             cout << SDL_GetError() << endl;
