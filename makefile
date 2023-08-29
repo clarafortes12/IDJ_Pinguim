@@ -1,31 +1,111 @@
 COMPILER = g++
+RMDIR = rm -rdf
+RM = rm -f
 
 SDL_INC_PATH = Include
 SDL_PATH = sdl
 SRC_PATH = src
 CPP_PATH = libs
 INC_PATH = include
-OBJ_PATH = obj
+BIN_PATH = bin
+DEP_PATH = dep
 
 FLAGS = -std=c++11 -Wall -pedantic -Wextra -Wno-unused-parameter -Werror=init-self
-
+RFLAGS = -O3 -mtune=native
 DFLAGS = -ggdb -O0 -DDEBUG
-
-INC_PATHS = -I$(SDL_PATH)/$(SDL_INC_PATH) -I$(INC_PATH)
-
-EXEC = jogo
+DEP_FLAGS = -M -MT $@ -MT $(BIN_PATH)/$(*F).o -MP -MF $@
 
 LIBS = -L$(SDL_PATH)/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 
-MAIN = $(wildcard $(SRC_PATH)/*.cpp)
+INC_PATHS = -I$(SDL_PATH)/$(SDL_INC_PATH) -I$(INC_PATH)
 
-FILES = $(wildcard $(SRC_PATH)/$(CPP_PATH)/*.cpp)
+CPP_FILES = $(wildcard $(SRC_PATH)/*.cpp)
+INC_FILES = $(wildcard $(SRC_PATH)/*.hpp)
+FILE_NAMES = $(sort $(notdir $(CPP_FILES:.cpp=)) $(notdir $(INC_FILES:.h=)))
+DEP_FILES = $(addprefix $(DEP_PATH)/,$(addsuffix .d,$(FILE_NAMES)))
+OBJ_FILES = $(addprefix $(BIN_PATH)/,$(notdir $(CPP_FILES:.cpp=.o)))
 
-EXECUTAVEL = $(EXEC).exe
+EXEC = jogo
 
-all:
-	$(COMPILER) $(FLAGS) $(INC_PATHS) -o $(EXEC) $(MAIN) $(FILES) $(LIBS)
-debug:
-	$(COMPILER) $(FLAGS) $(DFLAGS) $(INC_PATHS) -o $(EXEC) $(MAIN) $(FILES) $(LIBS)
-run:
-	.\$(EXECUTAVEL)
+
+# SE FOR WINDOWS
+ifeq ($(OS),Windows_NT)
+RMDIR = rd /s /q
+RM = del /q
+
+
+LINK_PATH = $(addprefix -L,$(addsuffix /lib,$(SDL_PATHS)))
+FLAGS += -mwindows
+DFLAGS += -mconsole
+LIBS := -lmingw32 -lSDL2main $(LIBS)
+
+EXEC := $(EXEC).exe
+
+else
+
+UNAME_S := $(shell uname -s)
+
+# SE FOR MAC
+ifeq ($(UNAME_S), Darwin)
+
+LIBS = -lm -framework SDL2 -framework SDL2_image -framework SDL2_mixer -framework SDL2_ttf
+
+endif
+endif
+
+.PRECIOUS: $(DEP_FILES)
+.PHONY: release debug clean folders help
+
+all: $(EXEC)
+
+$(EXEC): $(OBJ_FILES)
+	$(COMPILER) -o $@ $^ $(LINK_PATH) $(LIBS) $(FLAGS)
+
+$(BIN_PATH)/%.o: $(DEP_PATH)/%.d | folders
+	$(COMPILER) $(INC_PATHS) $(addprefix $(SRC_PATH)/,$(notdir $(<:.d=.cpp))) -c $(FLAGS) -o $@
+
+$(DEP_PATH)/%.d: $(SRC_PATH)/%.cpp | folders
+	$(COMPILER) $(INC_PATHS) $< $(DEP_FLAGS) $(FLAGS)
+
+exec:
+	.\$(EXEC)
+
+clean:
+	$(RMDIR) $(DEP_PATH)
+	$(RMDIR) $(BIN_PATH)
+	$(RM) $(EXEC)
+
+release: FLAGS += $(RFLAGS)
+release: $(EXEC)
+
+debug: FLAGS += $(DFLAGS)
+debug: $(EXEC)
+
+folders:
+ifeq ($(OS), Windows_NT)
+	@if NOT exist $(DEP_PATH) (mkdir $(DEP_PATH))
+	@if NOT exist $(BIN_PATH) (mkdir $(BIN_PATH))
+	@if NOT exist $(INC_PATH) (mkdir $(INC_PATH))
+	@if NOT exist $(SRC_PATH) (mkdir $(SRC_PATH))
+else
+	@mkdir -p $(DEP_PATH) $(BIN_PATH) $(INC_PATH) $(SRC_PATH)
+endif
+
+print-% : ; echo $* = $($*)
+
+help:
+ifeq ($(OS), Windows_NT)
+	echo.
+endif
+	@echo Available targets:
+	@echo - release: Builds the release version
+	@echo - debug: Builds the debug version
+	@echo - clean: Cleans generated files
+	@echo - folders: Generates project directories
+	@echo - help: Show help
+ifeq ($(OS), Windows_NT)
+	echo.
+endif
+
+.SECONDEXPANSION:
+-include $$(DEP_FILES)
